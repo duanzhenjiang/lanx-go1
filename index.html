@@ -28,7 +28,7 @@ var owner="duanzhenjiang",repo="lanx-go1",branch="main",baked="https://honors-vi
 var go=document.getElementById("go"),msg=document.getElementById("msg");
 function ok(u){return typeof u==="string"&&/^https:\/\/[a-z0-9.-]+/i.test(u);}
 function jump(u){if(ok(u)){go.href=u;location.replace(u);return true;}return false;}
-var api="https://api.github.com/repos/"+owner+"/"+repo+"/contents/url.json?ref="+branch+"&cb="+Date.now();
+var api="https://raw.githubusercontent.com/"+owner+"/"+repo+"/"+branch+"/url.json?cb="+Date.now();
 fetch(api,{cache:"no-store",headers:{Accept:"application/vnd.github.raw+json"}})
 .then(function(r){if(!r.ok)throw 0;return r.json();})
 .then(function(d){if(!jump(d&&d.url))throw 0;})
