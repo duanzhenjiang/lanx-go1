@@ -29,9 +29,12 @@ var go=document.getElementById("go"),msg=document.getElementById("msg");
 function ok(u){return typeof u==="string"&&/^https:\/\/[a-z0-9.-]+/i.test(u);}
 function jump(u){if(ok(u)){go.href=u;location.replace(u);return true;}return false;}
 var api="https://raw.githubusercontent.com/"+owner+"/"+repo+"/"+branch+"/url.json?cb="+Date.now();
-fetch(api,{cache:"no-store",headers:{Accept:"application/vnd.github.raw+json"}})
-.then(function(r){if(!r.ok)throw 0;return r.json();})
-.then(function(d){if(!jump(d&&d.url))throw 0;})
+function read(u){var c=new AbortController(),t=setTimeout(function(){c.abort();},4000);
+return fetch(u,{cache:"no-store",signal:c.signal}).then(function(r){if(!r.ok)throw 0;return r.json();})
+.then(function(d){if(!ok(d&&d.url))throw 0;return d.url;}).finally(function(){clearTimeout(t);});}
+read(new URL("url.json?cb="+Date.now(),location.href).href)
+.catch(function(){return read(api);})
+.then(jump)
 .catch(function(){if(jump(baked)){msg.textContent="已使用上次保存的网址（可能稍旧）；若打不开，请在电脑上点“重新发布”。";}
 else{msg.textContent="暂时取不到最新网址，请稍后重试或在电脑上确认远程访问已开启。";}});
 })();
